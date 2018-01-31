@@ -5,13 +5,10 @@
 # http://shiny.rstudio.com
 #
 
-library(shiny)
-library(tm)
-library(wordcloud)
-library(memoise)
-library(dplyr)
-library(ggplot2)
-library(data.table)
+required.packages <- c("shiny", "dplyr", "tm", "wordcloud", "memoise", "ggplot2", "data.table")
+new.packages <- required.packages[!(required.packages %in% installed.packages()[,"Package"])]
+if(length(new.packages)) install.packages(new.packages)
+lapply(required.packages, require, character.only = TRUE)
 source("loaddata.R")
 
 shinyUI(navbarPage("SOA PAF Article Index",
