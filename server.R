@@ -5,22 +5,17 @@
 # http://shiny.rstudio.com
 #
 
+# Ensure for word cloud that plot is repeatable within a single session despite random component
+wordcloud_rep <- repeatable(wordcloud)
+
 
 shinyServer(function(input, output) {
 
   # Word Cloud  
-  wordcloud_rep <- repeatable(wordcloud)
-  
-  output$articlePlot2 <- renderPlot({
-    
-    # Calculate frequencies
-    data <- articledata
-    # if (input$nlast.wc != "All") {
-    #   data <- data[data, data$Last == input$nlast.wc]
-    # }
+  output$plot.wordcloud <- renderPlot({
     
     # Create table to hold keywords by article
-    KeywordList <- data.table(Name = data$Keywords, Index = 1:dim(data)[1])
+    KeywordList <- data.table(Name = articledata$Keywords, Index = 1:dim(articledata)[1])
     
     # Create table to count articles with individual keywords
     KeywordCount <- data.frame(keywords, Count = 0)
@@ -32,33 +27,33 @@ shinyServer(function(input, output) {
     
     # Generate a wordcloud of the relative frequencies
     # Implement upper bound on frequency
-    KeywordCount.filter <- filter(KeywordCount, Count < input$range[2])
+    KeywordCount.filter <- filter(KeywordCount, Count < input$i.range[2])
     par(mar = c(0,0,0,0))
     
     # Implement lower bound on frequency and max words in cloud
     wordcloud_rep(KeywordCount.filter$keywords, KeywordCount.filter$Count, scale=c(4,0.5),
-                  min.freq = input$range[1], max.words=input$max,
+                  min.freq = input$i.range[1], max.words=input$i.max,
                   colors=brewer.pal(8, "Dark2"))
   })
   
   # Barplot of frequencies
-  output$articlePlot <- renderPlot({
+  output$plot.frequency <- renderPlot({
     
     # Generate a barplot of the relative frequencies
-    ggplot(articledata, aes_string(input$xvar)) + geom_bar() + coord_flip()
+    ggplot(articledata, aes_string(input$i.xvar)) + geom_bar() + coord_flip()
 
   })
 
   # Table  
-  output$articleTable <- DT::renderDataTable(DT::datatable({      
+  output$table.2filters <- DT::renderDataTable(DT::datatable({      
     
     # Generate a table of articles fitting two criterion
     data <- articledata
-    if (input$nlast != "All") {
-      data <- data[data$Last == input$nlast,]
+    if (input$i.nlast != "All") {
+      data <- data[data$Last == input$i.nlast,]
     }
-    if (input$dissue != "All") {
-      data <- data[data$Date == input$dissue,]
+    if (input$i.dissue != "All") {
+      data <- data[data$Date == input$i.dissue,]
     }
     data[, c(2, 9:10, 13, 21, 16, 24, 17, 6)]
   }))
