@@ -1,4 +1,4 @@
-# SOA_PAF_Section_Newsletter_Analyzer
+# SOA_PAF_Section_Newsletter_Catalogue
 
 **For Educational Purposes Only**
   
