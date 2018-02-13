@@ -53,7 +53,10 @@ shinyUI(navbarPage("SOA PAF Article Index",
                               sidebarPanel(
                                 selectInput('i.xvar', 'Dimension:', 
                                             names(articledata)[c(1, 2, 7:12, 15, 19)],
-                                            selected="Last")
+                                            selected="Last"),
+                                sliderInput("i.countrange",
+                                            "Frequency range:",
+                                            min = 1,  max = 50, value = c(1, 20))
                               ),
                               
                               # Show a plot of the generated distribution

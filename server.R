@@ -15,7 +15,8 @@ shinyServer(function(input, output) {
   output$plot.wordcloud <- renderPlot({
     
     # Create table to hold keywords by article
-    KeywordList <- data.table(Name = articledata$Keywords, Index = 1:dim(articledata)[1])
+    KeywordList <- data.table(Name = articledata$Keywords, 
+                              Index = 1:dim(articledata)[1])
     
     # Create table to count articles with individual keywords
     KeywordCount <- data.frame(keywords, Count = 0)
@@ -40,7 +41,16 @@ shinyServer(function(input, output) {
   output$plot.frequency <- renderPlot({
     
     # Generate a barplot of the relative frequencies
-    ggplot(articledata, aes_string(input$i.xvar)) + geom_bar() + coord_flip()
+    # Simpler code that produces a plot without filter
+    # ggplot(articledata, aes_string(input$i.xvar)) + geom_bar() + coord_flip()
+    
+    # Two-step code that summarizes data and implements count filter
+    articledata %>% 
+      group_by_(input$i.xvar) %>% 
+      mutate(N = n()) %>% 
+      filter(N >= input$i.countrange[1]) %>% 
+      filter(N <= input$i.countrange[2]) %>% 
+      ggplot(aes_string(input$i.xvar)) + geom_bar() + coord_flip()  
 
   })
 
