@@ -28,12 +28,16 @@ shinyServer(function(input, output) {
     
     # Generate a wordcloud of the relative frequencies
     # Implement upper bound on frequency
-    KeywordCount.filter <- filter(KeywordCount, Count < input$i.range[2])
+    KeywordCount.filter <- filter(KeywordCount, 
+                                  Count < input$i.range[2])
     par(mar = c(0,0,0,0))
     
     # Implement lower bound on frequency and max words in cloud
-    wordcloud_rep(KeywordCount.filter$keywords, KeywordCount.filter$Count, scale=c(4,0.5),
-                  min.freq = input$i.range[1], max.words=input$i.max,
+    wordcloud_rep(KeywordCount.filter$keywords, 
+                  KeywordCount.filter$Count, 
+                  scale=c(4,0.5),
+                  min.freq = input$i.range[1], 
+                  max.words=input$i.max,
                   colors=brewer.pal(8, "Dark2"))
   })
   
