@@ -14,22 +14,27 @@ shinyServer(function(input, output) {
   # Word Cloud  
   output$plot.wordcloud <- renderPlot({
     
-    # Create table to hold keywords by article
-    KeywordList <- data.table(Name = articledata$Keywords, 
-                              Index = 1:dim(articledata)[1])
+    # #Create table to hold keywords by article
+    # KeywordList <- data.table(Name = articledata$Keywords,
+    #                           Index = 1:dim(articledata)[1])
+    # 
+    # # Create table to count articles with individual keywords
+    # KeywordCount <- data.frame(keywords, Count = 0)
+    # 
+    # # Fill in table with frequency of keywords
+    # for (i in 1:dim(KeywordCount)[1]){
+    #   KeywordCount[i, 2] <- dim(KeywordList[like(Name, KeywordCount[i, 1])])[1]
+    # }
+    # 
+    # # Generate a wordcloud of the relative frequencies
+    # # Implement upper bound on frequency
+    # KeywordCount.filter <- filter(KeywordCount,
+    #                               Count < input$i.range[2])
     
-    # Create table to count articles with individual keywords
-    KeywordCount <- data.frame(keywords, Count = 0)
+    KeywordCount.filter <- data.frame(keywords) %>% 
+      mutate(Count = sapply(keywords, function(x) length(grep(x, articledata$Keywords)))) %>%
+      filter(Count < input$i.range[2])
     
-    # Fill in table with frequency of keywords
-    for (i in 1:dim(KeywordCount)[1]){
-      KeywordCount[i, 2] <- dim(KeywordList[like(Name, KeywordCount[i, 1])])[1]
-    }
-    
-    # Generate a wordcloud of the relative frequencies
-    # Implement upper bound on frequency
-    KeywordCount.filter <- filter(KeywordCount, 
-                                  Count < input$i.range[2])
     par(mar = c(0,0,0,0))
     
     # Implement lower bound on frequency and max words in cloud
